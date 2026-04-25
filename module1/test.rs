@@ -2,15 +2,17 @@
 fn is_even(x: i32) -> bool {
     x % 2 == 0
 }
-/*
+/* 
     example of multiline comment
+    3rw \r {} 
+
 */
 fn main() {     
     // Variable declaration and assignment
     let mut sum =    0;
-    let mut count = 0;
+    let mut         count = 0;
     let limit = 10;     
-
+  
     // Loop: for loop
     for num in 1..=limit {
         // Arithmetic expression
@@ -39,7 +41,7 @@ fn main() {
     } else {
         0
     };
-
+/*   */
     println!("Sum of qualifying squares: {}", sum);
     println!("Count: {}", count);
     println!("Average: {}", final_avg);
