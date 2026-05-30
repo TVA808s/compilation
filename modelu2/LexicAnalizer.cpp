@@ -23,8 +23,8 @@ struct LexicalError {
 vector<LexicalError> errors;
 
 // Словари для быстрого поиска
-const set<string> keywords = { "#include", "using", "bool", "return", "short", "int", "for", "if", "while", "main", "else" };
-const set<string> identifiers = { "is_even", "x", "sum", "count", "limit", "squared", "i", "final_avg", "cout", "endl" };
+const set<string> keywords = { "#include", "using", "bool", "return", "short", "int", "for", "if", "while", "main", "else", "break", "continue" };
+const set<string> identifiers = { "is_even", "x", "sum", "count", "limit", "squared", "i", "final_avg", "cout", "endl", "std", "z" };
 const set<string> constants = { "0", "10", "1", "2", "3" };
 const set<string> operators2 = { "::", "==", "<=", ">=", "&&", "<<", ">>", "+=", "++", "--", "?:" };
 const set<char> operators1 = { '%', '=', '*', '/', '>', '<', '?', ':', '+', '-' };
@@ -39,7 +39,12 @@ bool isValidInteger(const string& s) {
     return true;
 }
 
-string getTokenType(const string& w, int line) {
+string getTokenType(const string& w, int line, bool inIncludeContext = false) {
+    // Если мы в контексте #include, то < и > - разделители
+    if (inIncludeContext && (w == "<" || w == ">")) {
+        return "DELIMITER";
+    }
+    
     // Определение типа
     if (keywords.count(w)) return "KEYWORD";
     if (identifiers.count(w)) return "IDENTIFIER";
@@ -69,7 +74,6 @@ string getTokenType(const string& w, int line) {
             }
         }
         if (hasLetters) {
-            // Если начинается с цифры и содержит буквы - это IDENTIFIER_ERROR
             errors.emplace_back("IDENTIFIER_ERROR", "Identifier cannot start with a digit: '" + w + "'", line);
             return "UNKNOWN";
         }
@@ -132,7 +136,6 @@ vector<string> split(const string& line, int lineNum) {
         // Числа (включая ошибочные)
         if (isdigit(line[i])) {
             string num;
-            // Собираем все цифры и буквы подряд
             while (i < len && (isalnum(line[i]) || line[i] == '_')) {
                 num += line[i++];
             }
@@ -184,7 +187,8 @@ void printErrors() {
 // Программа
 int main() {
     vector<Token> tokens;
-    ifstream test("TestClear.cpp");
+    // ifstream test("TestClear.cpp");
+    ifstream test("TestErrors.cpp");
     if (!test) {
         cerr << "No such file\n";
         return 1;
@@ -192,10 +196,52 @@ int main() {
 
     string line;
     int lineNum = 0;
+    bool inIncludeContext = false;
+    bool waitingForHeader = false;
+    
     while (getline(test, line)) {
         lineNum++;
-        for (const auto& lex : split(line, lineNum))
-            tokens.emplace_back(getTokenType(lex, lineNum), lex, lineNum);
+        vector<string> lexemes = split(line, lineNum);
+        
+        for (size_t j = 0; j < lexemes.size(); j++) {
+            const string& lex = lexemes[j];
+            
+            // Определяем контекст #include
+            if (lex == "#include") {
+                inIncludeContext = true;
+                waitingForHeader = true;
+                tokens.emplace_back(getTokenType(lex, lineNum, false), lex, lineNum);
+                continue;
+            }
+            
+            // Если мы в контексте #include
+            if (inIncludeContext) {
+                if (waitingForHeader && lex == "<") {
+                    tokens.emplace_back("DELIMITER", lex, lineNum);
+                    waitingForHeader = false;
+                    continue;
+                }
+                if (lex == ">") {
+                    tokens.emplace_back("DELIMITER", lex, lineNum);
+                    inIncludeContext = false;  // контекст закончен
+                    waitingForHeader = false;
+                    continue;
+                }
+                // Если это имя заголовка (iostream)
+                if (!waitingForHeader && lex != "<" && lex != ">") {
+                    tokens.emplace_back(getTokenType(lex, lineNum, false), lex, lineNum);
+                    continue;
+                }
+            }
+            
+            // Обычная обработка
+            tokens.emplace_back(getTokenType(lex, lineNum, false), lex, lineNum);
+            
+            // Сброс контекста, если не в include
+            if (!inIncludeContext) {
+                waitingForHeader = false;
+            }
+        }
     }
 
     printTokens(tokens);
