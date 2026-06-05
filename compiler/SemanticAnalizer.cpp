@@ -208,6 +208,15 @@ public:
                     string val = rest.substr(eq + 3);
                     while (!val.empty() && val.front() == ' ') val.erase(0, 1);
                     if (val.front() == '"' && val.back() == '"') val = val.substr(1, val.length() - 2);
+                    
+                    string leftType = "short";
+                    string rightType = detectType(val);
+                    
+                    if (rest.substr(eq + 3).front() == '"') rightType = "string";
+                    
+                    if (leftType != "unknown" && rightType != "unknown" && !typesCompatible(leftType, rightType))
+                        addError("TYPE_MISMATCH", "Cannot assign " + rightType + " to " + leftType + " (variable '" + name + "')");
+                    
                     addTriad("=", name, parseExpression(val));
                     addSymbol(name, "short", true, currentScope);
                 } else addSymbol(name, "short", false, currentScope);

@@ -27,3 +27,4 @@
         |       +-- i++
         +-- var: final_avg = (count > 0) ? (sum / count) : 0
         +-- cout << ""Average: "" << final_avg << endl
+        +-- return 0

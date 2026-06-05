@@ -9,9 +9,9 @@ Program
 |       +-- return ((x % 2) == 0)
 +-- function: main -> int
     +-- body
-        +-- var: sum = 0
+        +-- var: sum = ""2""
         +-- var: count = 0
-        +-- var: limit = 10
+        +-- var: limit = ""aw""
         +-- for i = 0; condition: (i <= limit); i++
         |   +-- body
         |       +-- var: squared = (i * i)

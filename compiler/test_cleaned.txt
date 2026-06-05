@@ -5,7 +5,7 @@ bool is_even(short x) {
 return (x % 2) == 0;
 }
 int main() {
-short sum = 0, count = 0, limit = 10;
+short sum = "2", count = 0, limit = "aw";
 for (short i = 0; i <= limit; i++) {
 short squared = i * i;
 if (is_even(i) && squared > 10) {
