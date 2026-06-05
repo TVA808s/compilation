@@ -99,7 +99,7 @@ int main() {
         cout << "\nTriads saved to 'triads.txt'\n";
     }
     
-    cout << "\n\nCOMPILATION COMPLETED SUCCESSFULLY";
+    cout << "\n\nCOMPILATION COMPLETED";
     cout << "\nGenerated files:\n";
     cout << "  - test_cleaned.txt\n";
     cout << "  - tokens.txt\n";

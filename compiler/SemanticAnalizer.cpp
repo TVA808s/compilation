@@ -387,6 +387,6 @@ int main() {
     
     cout << "\nSemantic analysis completed " 
          << (analyzer.hasErrors() ? "with errors" : "successfully") << "\n";
-    
+    if (analyzer.hasErrors()) return 1;
     return 0;
 }
