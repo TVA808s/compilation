@@ -1,0 +1,17 @@
++-- include: iostream
++-- using: cout
++-- using: endl
++-- function: test -> void
+|   +-- params
+|       +-- a: short
+|   +-- body
+|       +-- var: a = 5
+|       +-- var: b = 10
+|       +-- {
+|           +-- var: b = 20
+|           +-- assign: a = b
+|       +-- }
+|       +-- assign: c = 30
++-- function: main -> int
+    +-- body
+        +-- return 0

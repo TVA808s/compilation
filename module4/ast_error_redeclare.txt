@@ -1,0 +1,11 @@
++-- include: iostream
++-- using: cout
++-- using: endl
++-- function: main -> int
+    +-- body
+        +-- var: x = 10
+        +-- var: y = 20
+        +-- var: x = 30
+        +-- var: x = 40
+        +-- var: y = 50
+        +-- return 0

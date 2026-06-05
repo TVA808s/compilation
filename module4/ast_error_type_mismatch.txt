@@ -1,0 +1,11 @@
++-- include: iostream
++-- using: cout
++-- using: endl
++-- function: main -> int
+    +-- body
+        +-- var: num = 10
+        +-- var: flag = 1
+        +-- assign: num = "hello"
+        +-- assign: flag = 42
+        +-- assign: num = flag
+        +-- return 0

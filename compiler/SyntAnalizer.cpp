@@ -7,7 +7,7 @@
 #include <sstream>
 #include <set>
 #include <map>
-
+#include <functional>
 using namespace std;
 
 // ==================== Token Types ====================
@@ -772,11 +772,26 @@ void printExprInline(ASTPtr node) {
     }
 }
 
-// ==================== Main ====================
+void saveASTToFile(ASTPtr node, const string& filename) {
+    // Перенаправляем stdout в файл
+    streambuf* oldCout = cout.rdbuf();
+    ofstream file(filename);
+    cout.rdbuf(file.rdbuf());
+    
+    // Используем существующую функцию printAST
+    printAST(node);
+    
+    // Восстанавливаем stdout
+    cout.rdbuf(oldCout);
+    file.close();
+    
+    cout << "AST saved to " << filename << endl;
+}
+
 int main() {
     cout << "=== Syntax Analyzer ===\n\n";
     
-    auto tokens = loadTokens("tokens.cpp");
+    auto tokens = loadTokens("tokens.txt");
     if (tokens.empty()) { cerr << "No tokens loaded.\n"; return 1; }
     
     cout << "Loaded " << tokens.size() << " tokens.\n\n";
@@ -792,6 +807,9 @@ int main() {
         } else {
             cout << "=== Parsing OK ===\n\n=== AST ===\n\n";
             printAST(ast);
+            
+            // Сохраняем AST в файл для семантического анализатора
+            saveASTToFile(ast, "ast_output.txt");
         }
     } catch (const exception& e) {
         cerr << "=== FATAL ERROR ===\n" << e.what() << "\n";

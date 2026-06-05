@@ -1,0 +1,10 @@
++-- include: iostream
++-- using: cout
++-- using: endl
++-- function: main -> int
+    +-- body
+        +-- var: sum = 0
+        +-- assign: sum = undeclaredVar
+        +-- assign: result = count + unknown
+        +-- cout << unknownVar << endl
+        +-- return 0

@@ -101,7 +101,7 @@ private:
         string n = clean(name);
         return varTypes.count(n) ? varTypes[n] : "unknown";
     }
-    // Генерация триад для выражений
+    
     string parseExpression(const string& expr) {
         string e = strip(expr);
         if (e.empty()) return "";
@@ -175,7 +175,6 @@ private:
     }
 
 public:
-    // Проход по дереву и добавление
     void analyze(const vector<string>& ast) {
         addSymbol("cout", "ostream", true, "global");
         addSymbol("endl", "manipulator", true, "global");
@@ -341,16 +340,32 @@ public:
     }
     
     bool hasErrors() const { return !errors.empty(); }
+    void saveTriadsToFile(const string& filename) {
+    ofstream file(filename);
+    if (!file) return;
+    for (const auto& t : triads) {
+        file << t.number << ": (" << t.op << ", " << t.arg1 << ", " << t.arg2 << ")\n";
+    }
+    file.close();
+    cout << "Triads saved to " << filename << endl;
+}
 };
 
 int main() {
-    cout << "\nSemantic Analyzer";
+    cout << "\nSemantic Analyzer\n";
+    
     ifstream file("ast_output.txt");
-    if (!file.is_open()) { cerr << "Error: Cannot open ast_output.txt\n"; return 1; }
+    if (!file.is_open()) { 
+        cerr << "Error: Cannot open ast_output.txt\n"; 
+        return 1; 
+    }
     
     vector<string> astLines;
     string line;
-    while (getline(file, line)) astLines.push_back(line);
+    while (getline(file, line)) {
+        astLines.push_back(line);
+    }
+    file.close();
     
     SemanticAnalyzer analyzer;
     analyzer.analyze(astLines);
@@ -358,6 +373,11 @@ int main() {
     analyzer.printTriads();
     analyzer.printErrors();
     
-    cout << "\nSemantic analysis completed " << (analyzer.hasErrors() ? "with errors" : "successfully") << "\n";
+    // Сохраняем триады в файл
+    analyzer.saveTriadsToFile("triads.txt");
+    
+    cout << "\nSemantic analysis completed " 
+         << (analyzer.hasErrors() ? "with errors" : "successfully") << "\n";
+    
     return 0;
 }
